@@ -36,7 +36,6 @@ router.post('/addProduct', verify, async (req, res) => {
 
 router.get('/getAllProducts', verify, async (req, res) => {
 
-
     try {
         const allProducts = await Product.find()
         res.status(200).send(allProducts)
