@@ -2,6 +2,8 @@ const express = require('express')
 const authRoute=require('./routes/auth')
 const categoryRoute=require('./routes/categoryRoute')
 const productRoute=require('./routes/productRoute')
+const chatRoute=require('./routes/chatRoute')
+const postRoute=require('./routes/postRoute')
 require('./database/database')
 const dotenv=require('dotenv')
 
@@ -13,6 +15,8 @@ app.use(express.json())
 app.use('/api/user',authRoute)
 app.use('/api/category',categoryRoute)
 app.use('/api/product',productRoute)
+app.use('/api/chat',chatRoute)
+app.use('/api/post',postRoute)
 
 
 app.listen(port, () => {
