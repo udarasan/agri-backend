@@ -6,10 +6,13 @@ const chatRoute=require('./routes/chatRoute')
 const postRoute=require('./routes/postRoute')
 require('./database/database')
 const dotenv=require('dotenv')
+const cors = require('cors')
 
 dotenv.config()
 
 const app = express()
+
+app.use(cors())
 const port = 3000
 app.use(express.json())
 app.use('/api/user',authRoute)
