@@ -13,7 +13,7 @@ dotenv.config()
 const app = express()
 
 app.use(cors())
-const port = 3000
+const port = 3005
 app.use(express.json())
 app.use('/api/user',authRoute)
 app.use('/api/category',categoryRoute)

@@ -12,6 +12,7 @@ router.post('/register',async (req, res) => {
     const user=new User({
         name:req.body.name,
         email:req.body.email,
+        role:req.body.role,
         password:req.body.password,
     })
 
@@ -39,6 +40,7 @@ router.post('/login', async (req, res) => {
         const user=new User({
             name:req.body.name,
             email:req.body.email,
+            role:req.body.role,
             password:req.body.password,
         })
 
@@ -51,18 +53,33 @@ router.post('/login', async (req, res) => {
             password:req.body.password
         })
 
-        if(!emailExist)return res.status(400).send('Wrong Email Address!')
-        if(!passwordExist)return res.status(400).send('Wrong Password!')
+        if(!emailExist)return res.status(400).send({
+            "status":400,
+            "message":"Wrong Email Address",
+            "content":null
+        })
+        if(!passwordExist)return res.status(400).send({
+            "status":400,
+            "message":"Wrong Password",
+            "content":null
+        })
 
         //create and assign jwt token
         const token=jwt.sign({_id:user._id},process.env.JWT_TOKEN);
         res.status(200).send({
-            "token":token
+                "status":200,
+                "message":"success",
+                "content":token
+
         })
 
 
     }catch (e) {
-        res.status(500).send('Internal Server Error!')
+        res.status(500).send( {
+            "status":500,
+            "message":"Internal Server Error",
+            "content":null
+        })
     }
 
 
