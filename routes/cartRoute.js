@@ -26,7 +26,16 @@ router.post('/addCart', verify, async (req, res) => {
             const saveCart = await cart.save()
             res.status(200).send(saveCart)
         }else {
-            res.status(404).send('Customer Does  have a cart! ')
+            console.log('---------------------->')
+            const customerId = req.body.customer;
+            const cartItems = req.body.cartItems;
+
+            const updatedCart = await Cart.updateOne(
+                { customer: customerId },
+                { $addToSet: { cartItems: { $each: cartItems } } }
+            );
+
+            res.status(200).json(updatedCart);
         }
 
     } catch (e) {
@@ -34,14 +43,16 @@ router.post('/addCart', verify, async (req, res) => {
         res.status(400).send(e)
     }
 })
-router.put('/updateCart', async (req, res) => {
+
+router.put('/carts/:customerId/products/:productId', async (req, res) => {
     try {
-        const customerId = req.body.customer;
-        const cartItems = req.body.cartItems;
+        const customerId = req.params.customerId;
+        const productId = req.params.productId;
+        const quantity = req.body.quantity;
 
         const updatedCart = await Cart.updateOne(
-            { customer: customerId },
-            { $addToSet: { cartItems: { $each: cartItems } } }
+            { customer: customerId, "cartItems.product": productId },
+            { $set: { "cartItems.$.quantity": quantity } }
         );
 
         res.status(200).json(updatedCart);
@@ -50,6 +61,8 @@ router.put('/updateCart', async (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 });
+
+
 
 router.get('/getAllCart', verify, async (req, res) => {
 
@@ -67,6 +80,32 @@ router.get('/getAllCart', verify, async (req, res) => {
 
 
 })
+
+module.exports = router;
+
+// router.put('/updateCart', async (req, res) => {
+//     try {
+//         const customerId = req.body.customer;
+//         const cartItems = req.body.cartItems;
+//
+//         const updatedCart = await Cart.updateOne(
+//             { customer: customerId },
+//             { $addToSet: { cartItems: { $each: cartItems } } }
+//         );
+//
+//         res.status(200).json(updatedCart);
+//     } catch (err) {
+//         console.error(err);
+//         res.status(500).json({ message: 'Server error' });
+//     }
+// });
+
+
+
+
+
+
+
 /*router.put('/updateCart', verify, async (req, res) => {
 
     const cart = new Cart({
@@ -135,4 +174,4 @@ router.put('/updateCarts/:id', verify, async (req, res) => {
 
 
 
-module.exports = router;
+
