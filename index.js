@@ -4,6 +4,7 @@ const categoryRoute=require('./routes/categoryRoute')
 const productRoute=require('./routes/productRoute')
 const chatRoute=require('./routes/chatRoute')
 const postRoute=require('./routes/postRoute')
+const cartRoute=require('./routes/cartRoute')
 require('./database/database')
 const dotenv=require('dotenv')
 const cors = require('cors')
@@ -20,6 +21,7 @@ app.use('/api/category',categoryRoute)
 app.use('/api/product',productRoute)
 app.use('/api/chat',chatRoute)
 app.use('/api/post',postRoute)
+app.use('/api/cart',cartRoute)
 
 
 app.listen(port, () => {

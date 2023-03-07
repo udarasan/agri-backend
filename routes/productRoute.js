@@ -43,7 +43,7 @@ router.get('/getAllProducts', verify, async (req, res) => {
         console.log(e)
         res.status(400).send({
             message:
-                err.message || "Some error occurred while retrieving tutorials."
+                e.message || "Some error occurred while retrieving tutorials."
         });
     }
 

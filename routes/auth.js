@@ -20,14 +20,26 @@ router.post('/register',async (req, res) => {
     const emailExist = await User.findOne({
         email:req.body.email
     })
-    if(emailExist)return res.status(400).send('Email is Exist!')
+    if(emailExist)return res.status(400).send({
+        "status":400,
+        "message":"Email Is Exist",
+        "content":null
+    })
 
     try{
         const saveUser=await user.save()
-        res.status(200).send(saveUser)
+        res.status(200).send({
+            "status":200,
+            "message":"Success",
+            "content":saveUser
+        })
     }catch (e) {
         console.log(e)
-        res.status(400).send(e)
+        res.status(500).send({
+            "status":500,
+            "message":"Internal Server Error",
+            "content":e.message
+        })
     }
 
 
