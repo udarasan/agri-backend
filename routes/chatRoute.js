@@ -22,10 +22,10 @@ router.post('/sendMessage', verify, async (req, res) => {
 
 })
 
-router.get('/getMessages', verify, async (req, res) => {
+router.get('/getSendMessages/:sender/:receiver', verify, async (req, res) => {
 
     try {
-        const allMessagesByIds = await Chat.find({ sender: req.body.sender,receiver: req.body.receiver  })
+        const allMessagesByIds = await Chat.find({ sender: req.params.sender,receiver: req.params.receiver  })
         res.status(200).send(allMessagesByIds)
     } catch (e) {
         console.log(e)
@@ -35,6 +35,22 @@ router.get('/getMessages', verify, async (req, res) => {
         });
     }
 
+
+
+})
+
+router.get('/getReplyMessages/:sender/:receiver', verify, async (req, res) => {
+
+    try {
+        const allMessagesByIds = await Chat.find({ sender: req.params.receiver ,receiver: req.params.sender  })
+        res.status(200).send(allMessagesByIds)
+    } catch (e) {
+        console.log(e)
+        res.status(400).send({
+            message:
+                e.message || "Some error occurred while retrieving tutorials."
+        });
+    }
 
 
 })

@@ -5,7 +5,7 @@ const verify = require('../middleware/verifyToken');
 // GET all posts
 router.get('/posts', verify,async (req, res) => {
     try {
-        const posts = await Post.find().populate('replies');
+        const posts = await Post.find().populate('replies').sort('-createdAt');
         res.json(posts);
     } catch (err) {
         res.status(500).json({ message: err.message });
@@ -13,8 +13,14 @@ router.get('/posts', verify,async (req, res) => {
 });
 
 // GET a specific post
-router.get('/posts/:id', getPost, async (req, res) => {
-    res.json(res.post);
+router.get('/posts/:id', verify, async (req, res) => {
+    try {
+        console.log(req.params.id)
+        const posts = await Post.find({category:req.params.id}).populate('replies').sort('-createdAt');
+        res.json(posts);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
 });
 
 // CREATE a new post
@@ -23,6 +29,7 @@ router.post('/addPost', verify,async (req, res) => {
         title: req.body.title,
         content: req.body.content,
         author: req.body.author,
+        category: req.body.category
     });
 
     try {

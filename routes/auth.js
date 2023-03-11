@@ -60,6 +60,7 @@ router.post('/login', async (req, res) => {
         const emailExist = await User.findOne({
             email:req.body.email
         })
+        console.log(emailExist)
         // password validation
         const passwordExist = await User.findOne({
             password:req.body.password
@@ -81,7 +82,10 @@ router.post('/login', async (req, res) => {
         res.status(200).send({
                 "status":200,
                 "message":"success",
-                "content":token
+                "content":{
+                    "token":token,
+                    "customerId":emailExist._id
+                }
 
         })
 

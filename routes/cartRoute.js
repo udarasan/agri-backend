@@ -9,8 +9,6 @@ router.post('/addCart', verify, async (req, res) => {
         cartItems:req.body.cartItems
     })
 
-    console.log(req.body.cartItems)
-    console.log('hey i am here 1')
     // existing email validation
     const farmerIdExist = await User.findOne({
         _id: req.body.customer,
@@ -20,19 +18,42 @@ router.post('/addCart', verify, async (req, res) => {
     try {
         //check user is available in cart collection
         const cartUserIsExist=await Cart.findOne({customer:req.body.customer})
-        console.log(cartUserIsExist)
+        const productIsExist=await Cart.findOne({'cartItems.product':req.body.cartItems[0].product.valueOf()})
+
         if (!cartUserIsExist) {
-            console.log('hey i am here 2')
+            console.log('function 1')
             const saveCart = await cart.save()
             res.status(200).send(saveCart)
-        }else {
-            console.log('---------------------->')
+
+        }
+        else if (productIsExist==null){
+            console.log('function 2')
+            const updatedCart = await Cart.updateOne(
+                { customer: req.body.customer },
+                { $addToSet: { cartItems: { $each: req.body.cartItems } } }
+            );
+            res.status(200).send(updatedCart)
+        }
+
+
+        else {
+            console.log('function 3')
             const customerId = req.body.customer;
             const cartItems = req.body.cartItems;
 
+            //const qty=cartUserIsExist.cartItems['quantity'];
+            //console.log(cartUserIsExist.cartItems[0].quantity+=1)
+            //console.log(cartUserIsExist.cartItems[0].product.valueOf())
+            //console.log(cartItems[0].product.valueOf())
+            //console.log(productIsExist.cartItems[req.body.cartItems[0].product.valueOf()])
+
+            // const updatedCart = await Cart.updateOne(
+            //     { customer: customerId },
+            //     { $addToSet: { cartItems: { $each: cartItems } } }
+            // );
             const updatedCart = await Cart.updateOne(
-                { customer: customerId },
-                { $addToSet: { cartItems: { $each: cartItems } } }
+                { customer: customerId, "cartItems.product": cartItems[0].product.valueOf()},
+                { $set: { "cartItems.$.quantity": productIsExist.cartItems[0].quantity+1} }
             );
 
             res.status(200).json(updatedCart);
@@ -49,6 +70,7 @@ router.put('/carts/:customerId/products/:productId', async (req, res) => {
         const customerId = req.params.customerId;
         const productId = req.params.productId;
         const quantity = req.body.quantity;
+        console.log(quantity)
 
         const updatedCart = await Cart.updateOne(
             { customer: customerId, "cartItems.product": productId },
@@ -64,16 +86,25 @@ router.put('/carts/:customerId/products/:productId', async (req, res) => {
 
 
 
-router.get('/getAllCart', verify, async (req, res) => {
+
+
+router.get('/getAllCart/:customerId', verify, async (req, res) => {
 
     try {
-        const allProducts = await Cart.findOne({ customer: req.body.customer })
-        res.status(200).send(allProducts)
+        const allProducts = await Cart.findOne({ customer: req.params.customerId }).populate('cartItems.product');
+        console.log(allProducts)
+
+        res.status(200).send({
+            "status":200,
+            "message":"Success",
+            "content":allProducts
+        })
     } catch (e) {
         console.log(e)
         res.status(400).send({
-            message:
-                e.message || "Some error occurred while retrieving tutorials."
+            "status":400,
+            "message":e.message || "Some error occurred while retrieving tutorials.",
+            "content":null
         });
     }
 
